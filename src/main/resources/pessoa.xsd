@@ -1,0 +1,30 @@
+<xsd:schema xmlns="http://www.estudospringwebservice.org/pessoa/schema/beans"
+            targetNamespace="http://www.estudospringwebservice.org/pessoa/schema/beans"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="pessoas-request">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="pessoas-response">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="pessoa" type="pessoa"
+                             minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="pessoa">
+        <xsd:sequence>
+            <xsd:element name="id" type="xsd:int" />
+            <xsd:element name="nome" type="xsd:string" />
+            <xsd:element name="sobrenome" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

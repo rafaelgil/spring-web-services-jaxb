@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:sws="http://www.springframework.org/schema/web-services"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/web-services 
+                           http://www.springframework.org/schema/web-services/web-services-2.0.xsd">
+
+    <context:component-scan base-package="br.estudospringwebservice" />
+    <sws:annotation-driven />
+    
+    <sws:dynamic-wsdl id="pessoa" portTypeName="PersonTypeName"
+		requestSuffix="-request" responseSuffix="-response" locationUri="/pessoaService/"
+		targetNamespace="http://www.estudospringwebservice.org/pessoa/schema/beans">
+		<sws:xsd location="classpath:/pessoa.xsd" />
+	</sws:dynamic-wsdl>
+    
+    <bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller"
+          p:contextPath="org.estudospringwebservice.pessoa.schema.beans" />
+    
+    <bean id="marshallingPayloadMethodProcessor"
+		class="org.springframework.ws.server.endpoint.adapter.method.MarshallingPayloadMethodProcessor">
+		<constructor-arg ref="marshaller" />
+		<constructor-arg ref="marshaller" />
+	</bean>
+	
+	<bean id="defaultMethodEndpointAdapter"
+		class="org.springframework.ws.server.endpoint.adapter.DefaultMethodEndpointAdapter">
+		<property name="methodArgumentResolvers">
+			<list>
+				<ref bean="marshallingPayloadMethodProcessor" />
+			</list>
+		</property>
+		<property name="methodReturnValueHandlers">
+			<list>
+				<ref bean="marshallingPayloadMethodProcessor" />
+			</list>
+		</property>
+	</bean>
+          
+	<sws:interceptors>
+		<bean id="validatingInterceptor"
+			class="org.springframework.ws.soap.server.endpoint.interceptor.PayloadValidatingInterceptor">			
+			<property name="validateRequest" value="true"/>
+			<property name="validateResponse" value="true"/>
+			<property name="schemas">
+				<array>
+					<value>classpath:pessoa.xsd</value>
+				</array>
+			</property>
+				
+		</bean>	
+			
+		<bean id="loggingInterceptor" 
+			class="org.springframework.ws.server.endpoint.interceptor.PayloadLoggingInterceptor" />
+			
+	</sws:interceptors>
+
+</beans>
